@@ -13,7 +13,7 @@ const PERSONAL_DATA = {
     linkedin: "https://www.linkedin.com/in/raghuram-rkp/",
     email: "rama.pedapati@gmail.com",
     cvLink: "/RamaKrishnaPedapati-Resume.pdf", // Placeholder for CV download
-    profileImage: "https://placehold.co/150x150/4f46e5/ffffff?text=RP", // Placeholder
+    profileImage: "/profile.png", // Placeholder
     yearsOfExperience: 15,
     projectsCount: 7,
     coverageAchieved: "95%+"
