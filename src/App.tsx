@@ -95,7 +95,13 @@ const ACHIEVEMENTS_DATA = [
 
 // --- Utility Components ---
 
-const SectionTitle = ({ children, id, icon: Icon }) => (
+type SectionTitleProps = {
+    children: React.ReactNode;
+    id?: string;
+    icon?: React.ComponentType<any> | null;
+};
+
+const SectionTitle: React.FC<SectionTitleProps> = ({ children, id, icon: Icon }) => (
     <div id={id} className="pt-20 -mt-20"> {/* Anchor point */}
         <h2 className="text-3xl font-bold text-gray-900 flex items-center mb-6">
             {Icon && <Icon className="h-6 w-6 text-indigo-600 mr-3" />}
@@ -105,15 +111,27 @@ const SectionTitle = ({ children, id, icon: Icon }) => (
     </div>
 );
 
-const Button = ({ children, primary = false, link, onClick, className = '', external = true, as = 'a' }) => {
-    const Component = as;
+type ButtonProps = {
+    children: React.ReactNode;
+    primary?: boolean;
+    link?: string;
+    onClick?: (e?: any) => void;
+    className?: string;
+    external?: boolean;
+    as?: any;
+} & Record<string, any>;
+
+const Button: React.FC<ButtonProps> = ({ children, primary = false, link, onClick, className = '', external = true, as = 'a', ...rest }) => {
+    const Component: any = as;
+    const combinedClass = `flex items-center justify-center space-x-2 font-medium transition duration-300 rounded-lg shadow-md ${className} ${primary
+        ? 'bg-indigo-600 text-white hover:bg-indigo-500'
+        : 'bg-white text-indigo-600 border border-indigo-600 hover:bg-indigo-50 hover:border-indigo-500'}
+    `;
+
     const commonProps = {
-        className: `flex items-center justify-center space-x-2 font-medium transition duration-300 rounded-lg shadow-md ${className}
-            ${primary
-            ? 'bg-indigo-600 text-white hover:bg-indigo-500'
-            : 'bg-white text-indigo-600 border border-indigo-600 hover:bg-indigo-50 hover:border-indigo-500'
-        }`,
-    };
+        className: combinedClass,
+        ...rest,
+    } as any;
 
     if (link) {
         return (
@@ -129,7 +147,7 @@ const Button = ({ children, primary = false, link, onClick, className = '', exte
     }
 
     return (
-        <button onClick={onClick} {...commonProps}>
+        <button type="button" onClick={onClick} {...commonProps}>
             {children}
         </button>
     );
@@ -137,7 +155,16 @@ const Button = ({ children, primary = false, link, onClick, className = '', exte
 
 // --- LLM Powered Component (Skill Deep Dive) ---
 
-const SkillCardWithLLM = ({ skill, index, experience, projects, name, role }) => {
+type SkillCardWithLLMProps = {
+    skill: any;
+    index?: number;
+    experience?: any[];
+    projects?: any[];
+    name?: string;
+    role?: string;
+};
+
+const SkillCardWithLLM: React.FC<SkillCardWithLLMProps> = ({ skill, index, experience = [], projects = [], name, role }) => {
     const [deepDive, setDeepDive] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
@@ -156,8 +183,15 @@ const SkillCardWithLLM = ({ skill, index, experience, projects, name, role }) =>
         
         Start directly with the explanation.`;
 
-        // IMPORTANT: You must replace "" with your actual Gemini API Key to use this feature.
-        const apiKey = "AIzaSyAEe7ONIvd7985SlH9eAqbkMaT-xB_l_tY";
+        // Use environment variable for API key
+        const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+        
+        if (!apiKey) {
+            setDeepDive("API key not configured. Please set VITE_GEMINI_API_KEY in your environment variables.");
+            setIsLoading(false);
+            return;
+        }
+        
         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
 
         let retries = 0;
