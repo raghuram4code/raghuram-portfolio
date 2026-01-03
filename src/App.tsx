@@ -75,6 +75,13 @@ const EXPERIENCE_DATA = [
     },
 ];
 
+type Experience = {
+    role: string;
+    company: string;
+    duration: string;
+    points: string[];
+};
+
 const ACHIEVEMENTS_DATA = [
     {
         title: "Automation Coverage Leader",
@@ -164,7 +171,7 @@ type SkillCardWithLLMProps = {
     role?: string;
 };
 
-const SkillCardWithLLM: React.FC<SkillCardWithLLMProps> = ({ skill, index, experience = [], projects = [], name, role }) => {
+const SkillCardWithLLM: React.FC<SkillCardWithLLMProps> = ({ skill, index = 0, experience = [], projects = [], name, role }) => {
     const [deepDive, setDeepDive] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
@@ -402,7 +409,19 @@ const SkillsSection = () => (
     </motion.section>
 );
 
-const ProjectCard = ({ project, index }) => (
+type Project = {
+    title: string;
+    description: string;
+    technologies: string[];
+    link: string;
+};
+
+type ProjectCardProps = {
+    project: Project;
+    index?: number;
+};
+
+const ProjectCard: React.FC<ProjectCardProps> = ({ project, index = 0 }) => (
     <motion.div
         className="bg-white rounded-xl shadow-xl overflow-hidden border border-gray-100 hover:shadow-2xl transition-all duration-500 flex flex-col"
         initial={{ opacity: 0, y: 50 }}
@@ -442,7 +461,12 @@ const ProjectsSection = () => (
     </section>
 );
 
-const ExperienceItem = ({ experience, index }) => (
+type ExperienceItemProps = {
+    experience: Experience;
+    index?: number;
+};
+
+const ExperienceItem: React.FC<ExperienceItemProps> = ({ experience, index = 0 }) => (
     <motion.div
         className="relative pb-8 sm:pb-12 border-l-4 border-indigo-200 ml-2"
         initial={{ opacity: 0, x: -50 }}
@@ -456,7 +480,7 @@ const ExperienceItem = ({ experience, index }) => (
             <p className="text-indigo-600 font-medium mb-2">{experience.company}</p>
             <p className="text-sm text-gray-500 mb-4">{experience.duration}</p>
             <ul className="list-disc space-y-2 text-gray-700 pl-5">
-                {experience.points.map((point, i) => (
+                {experience.points.map((point: string, i: number) => (
                     <li key={i}>{point}</li>
                 ))}
             </ul>
@@ -511,7 +535,7 @@ const ContactSection = () => {
     const [status, setStatus] = useState('');
 
     // Mock submission handler
-    const handleSubmit = (e) => {
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setIsSubmitting(true);
         setStatus('');
@@ -565,7 +589,7 @@ const ContactSection = () => {
                                     type="text"
                                     id="name"
                                     value={name}
-                                    onChange={(e) => setName(e.target.value)}
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
                                     required
                                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
                                 />
@@ -576,7 +600,7 @@ const ContactSection = () => {
                                     type="email"
                                     id="email"
                                     value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
                                     required
                                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
                                 />
@@ -585,9 +609,9 @@ const ContactSection = () => {
                                 <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">Message</label>
                                 <textarea
                                     id="message"
-                                    rows="4"
+                                    rows={4}
                                     value={message}
-                                    onChange={(e) => setMessage(e.target.value)}
+                                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setMessage(e.target.value)}
                                     required
                                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
                                 ></textarea>
